@@ -1,4 +1,4 @@
-package jetpackcodesolution.booking;
+package jetpackcodesolution.infrastructure.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jetpackcodesolution.room.Room;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +20,7 @@ import java.time.Instant;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "bookings")
-public class Booking {
+public class BookingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +31,7 @@ public class Booking {
             name = "room_id",
             nullable = false,
             foreignKey = @ForeignKey(name = "fk_bookings_room"))
-    private Room room;
+    private RoomEntity room;
 
     @Column(nullable = false, length = 100)
     private String responsible;
@@ -49,28 +48,37 @@ public class Booking {
     @Column(name = "cancelled_at")
     private Instant cancelledAt;
 
-    public Booking(Room room, String responsible, Instant startTime, Instant endTime, Instant createdAt) {
+    public BookingEntity(
+            Long id,
+            RoomEntity room,
+            String responsible,
+            Instant startTime,
+            Instant endTime,
+            Instant createdAt,
+            Instant cancelledAt) {
+        this.id = id;
         this.room = room;
         this.responsible = responsible;
         this.startTime = startTime;
         this.endTime = endTime;
         this.createdAt = createdAt;
+        this.cancelledAt = cancelledAt;
     }
 
-    public void update(Room room, String responsible, Instant startTime, Instant endTime) {
+    public void update(RoomEntity room, String responsible, Instant startTime, Instant endTime) {
         this.room = room;
         this.responsible = responsible;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public void cancel(Instant now) {
+    public void cancelAt(Instant now) {
         if (cancelledAt == null) {
             cancelledAt = now;
         }
     }
 
-    public boolean isCancelled() {
+    public boolean hasCancellation() {
         return cancelledAt != null;
     }
 

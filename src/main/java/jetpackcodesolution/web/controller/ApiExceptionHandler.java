@@ -1,5 +1,7 @@
-package jetpackcodesolution.common;
+package jetpackcodesolution.web.controller;
 
+import jetpackcodesolution.domain.exception.RoomNameConflictException;
+import jetpackcodesolution.web.response.FieldViolation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.AuthenticationException;
@@ -27,6 +29,14 @@ public class ApiExceptionHandler {
                 .map(error -> new FieldViolation(error.getField(), error.getDefaultMessage()))
                 .toList();
         problem.setProperty("errors", errors);
+        return problem;
+    }
+
+    @ExceptionHandler(RoomNameConflictException.class)
+    public ProblemDetail handleRoomNameConflict(RoomNameConflictException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, exception.getMessage());
+        problem.setTitle("Conflicto de sala");
         return problem;
     }
 }

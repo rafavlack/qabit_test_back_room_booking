@@ -1,6 +1,8 @@
-package jetpackcodesolution.auth;
+package jetpackcodesolution.infrastructure.security;
 
+import jetpackcodesolution.application.dto.TokenResponse;
 import jetpackcodesolution.config.AppProperties;
+import jetpackcodesolution.application.port.output.AccessTokenIssuer;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -13,18 +15,19 @@ import java.time.Duration;
 import java.time.Instant;
 
 @Service
-public class TokenService {
+public class JwtTokenService implements AccessTokenIssuer {
 
     private final JwtEncoder encoder;
     private final AppProperties.Security security;
     private final Clock clock;
 
-    public TokenService(JwtEncoder encoder, AppProperties properties, Clock clock) {
+    public JwtTokenService(JwtEncoder encoder, AppProperties properties, Clock clock) {
         this.encoder = encoder;
         this.security = properties.security();
         this.clock = clock;
     }
 
+    @Override
     public TokenResponse issue(String username) {
         Instant now = clock.instant();
         Duration ttl = security.tokenTtl();

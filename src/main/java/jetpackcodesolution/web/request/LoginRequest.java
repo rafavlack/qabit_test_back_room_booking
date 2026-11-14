@@ -1,4 +1,4 @@
-package jetpackcodesolution.auth;
+package jetpackcodesolution.web.request;
 
 import jakarta.validation.constraints.NotBlank;
 

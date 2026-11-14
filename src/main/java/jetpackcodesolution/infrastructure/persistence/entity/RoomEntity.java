@@ -1,4 +1,4 @@
-package jetpackcodesolution.room;
+package jetpackcodesolution.infrastructure.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +19,7 @@ import java.time.Instant;
 @Table(
         name = "rooms",
         uniqueConstraints = @UniqueConstraint(name = "uq_rooms_name", columnNames = "name"))
-public class Room {
+public class RoomEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,8 @@ public class Room {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    public Room(String name, int capacity, Instant createdAt) {
+    public RoomEntity(Long id, String name, int capacity, Instant createdAt) {
+        this.id = id;
         this.name = name;
         this.capacity = capacity;
         this.createdAt = createdAt;

@@ -2,7 +2,7 @@ spring:
   application:
     name: qabit_test_back_room_booking
   profiles:
-    default: local
+    default: dev
   jpa:
     open-in-view: false
     hibernate:

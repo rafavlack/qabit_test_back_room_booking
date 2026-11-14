@@ -1,4 +1,4 @@
-package jetpackcodesolution.auth;
+package jetpackcodesolution.application.dto;
 
 public record TokenResponse(String accessToken, String tokenType, long expiresInSeconds) {
 }

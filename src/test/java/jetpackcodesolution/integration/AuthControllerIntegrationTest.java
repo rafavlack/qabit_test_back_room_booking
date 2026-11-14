@@ -1,5 +1,6 @@
-package jetpackcodesolution.auth;
+package jetpackcodesolution.integration;
 
+import jetpackcodesolution.RoomBookingApplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(classes = RoomBookingApplication.class)
 @AutoConfigureMockMvc
 class AuthControllerIntegrationTest {
 
