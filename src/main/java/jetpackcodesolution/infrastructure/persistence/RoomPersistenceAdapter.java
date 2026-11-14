@@ -8,6 +8,9 @@ import jetpackcodesolution.infrastructure.persistence.repository.RoomJpaReposito
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public class RoomPersistenceAdapter implements RoomRepository {
 
@@ -34,5 +37,17 @@ public class RoomPersistenceAdapter implements RoomRepository {
         } catch (DataIntegrityViolationException exception) {
             throw new RoomNameConflictException();
         }
+    }
+
+    @Override
+    public List<Room> findAll() {
+        return roomJpaRepository.findAllByOrderByIdAsc().stream()
+                .map(roomPersistenceMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public Optional<Room> findById(Long id) {
+        return roomJpaRepository.findById(id).map(roomPersistenceMapper::toDomain);
     }
 }

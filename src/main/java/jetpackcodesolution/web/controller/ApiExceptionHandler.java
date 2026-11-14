@@ -1,6 +1,7 @@
 package jetpackcodesolution.web.controller;
 
 import jetpackcodesolution.domain.exception.RoomNameConflictException;
+import jetpackcodesolution.domain.exception.RoomNotFoundException;
 import jetpackcodesolution.web.response.FieldViolation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -8,6 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 
@@ -37,6 +39,23 @@ public class ApiExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.CONFLICT, exception.getMessage());
         problem.setTitle("Conflicto de sala");
+        return problem;
+    }
+
+    @ExceptionHandler(RoomNotFoundException.class)
+    public ProblemDetail handleRoomNotFound(RoomNotFoundException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND, exception.getMessage());
+        problem.setTitle("Recurso no encontrado");
+        return problem;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "El parámetro '" + exception.getName() + "' no tiene un valor válido.");
+        problem.setTitle("Parámetro no válido");
         return problem;
     }
 }
