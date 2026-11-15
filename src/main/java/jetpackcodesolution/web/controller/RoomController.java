@@ -55,6 +55,7 @@ public class RoomController {
     }
 
     @Operation(summary = "Crear una sala")
+    @SecurityRequirement(name = "bearerAuth")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Sala creada"),
         @ApiResponse(responseCode = "400", description = "Datos de entrada no válidos"),
