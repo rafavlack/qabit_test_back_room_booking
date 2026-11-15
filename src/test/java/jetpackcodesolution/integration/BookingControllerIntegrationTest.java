@@ -195,7 +195,7 @@ class BookingControllerIntegrationTest {
                         .content(body(roomId, "ana", past, past.plus(1, ChronoUnit.HOURS))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Reserva no válida"))
-                .andExpect(jsonPath("$.detail").value("La reserva debe comenzar en el futuro."));
+                .andExpect(jsonPath("$.detail").value("La reserva debe comenzar posterior al momento actual."));
     }
 
     @Test

@@ -87,7 +87,7 @@ class CreateBookingServiceTest {
     void rejectsBookingThatDoesNotStartInTheFuture() {
         assertThatThrownBy(() -> service.createBooking(5L, "ana", NOW, END))
                 .isInstanceOf(InvalidBookingTimeException.class)
-                .hasMessage("La reserva debe comenzar en el futuro.");
+                .hasMessage("La reserva debe comenzar posterior al momento actual.");
 
         verify(roomRepository, never()).findByIdForUpdate(anyLong());
         verify(bookingRepository, never()).save(any());

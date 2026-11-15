@@ -67,7 +67,7 @@ public class UpdateBookingService implements UpdateBookingUseCase {
                     "La fecha de fin debe ser posterior a la fecha de inicio.");
         }
         if (!startTime.isAfter(now)) {
-            throw new InvalidBookingTimeException("La reserva debe comenzar en el futuro.");
+            throw new InvalidBookingTimeException("La reserva debe comenzar posterior al momento actual.");
         }
     }
 }
