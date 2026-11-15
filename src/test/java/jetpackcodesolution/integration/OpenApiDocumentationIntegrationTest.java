@@ -37,6 +37,13 @@ class OpenApiDocumentationIntegrationTest {
     }
 
     @Test
+    void bookingWriteOperationsRequireBearerAuth() throws Exception {
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paths['/api/bookings'].post.security[0].bearerAuth").isArray());
+    }
+
+    @Test
     void publicOperationsDoNotRequireBearerAuth() throws Exception {
         mockMvc.perform(get("/v3/api-docs"))
                 .andExpect(status().isOk())
