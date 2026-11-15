@@ -58,6 +58,11 @@ public class RoomPersistenceAdapter implements RoomRepository {
     }
 
     @Override
+    public Optional<Room> findByIdForUpdate(Long id) {
+        return roomJpaRepository.findByIdForUpdate(id).map(roomPersistenceMapper::toDomain);
+    }
+
+    @Override
     public void deleteById(Long id) {
         try {
             roomJpaRepository.deleteById(id);

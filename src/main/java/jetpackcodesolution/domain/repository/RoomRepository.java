@@ -17,5 +17,7 @@ public interface RoomRepository {
 
     Optional<Room> findById(Long id);
 
+    Optional<Room> findByIdForUpdate(Long id);
+
     void deleteById(Long id);
 }
