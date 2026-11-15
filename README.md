@@ -90,6 +90,10 @@ mvn clean package
 java -jar target/qabit_test_back_room_booking-1.0.0.jar
 ```
 
+### Colección de Postman
+
+Incluye una colección de Postman (`postman collection/Qabit Room Booking API.postman_collection.json`) con todos los endpoints preparados y listos para importar. Contiene la variable `baseUrl` configurada en `http://localhost:8081` y usa variables `bearerToken` para los endpoints protegidos. La colección está organizada en tres carpetas (auth, rooms, bookings) y cubre login, CRUD de salas, reservas con filtros, paginación, solapamientos y cancelación lógica. Para usarla, importa el archivo en Postman, ejecuta el login y guarda el token en la variable `bearerToken`.
+
 ## Cómo está organizado el código
 
 Aplicé la arquitectura hexagonal porque la prueba tenía reglas de negocio muy específicas (solapes, cancelaciones, orden de errores, validación de intervalos) y porque quería poder probarlas sin levantar Spring ni una base de datos. Separar dominio, aplicación, infraestructura y web me dio esa libertad: así el dominio solo conoce interfaces puras (sin Spring ni JPA), los servicios implementan la lógica de negocio y las capas de infraestructura (JPA, repositorios, mappers) viven en `infrastructure`, y los controladores son capas finas que solo traducen HTTP a llamadas de casos de uso.
@@ -129,7 +133,7 @@ Opté por bloquear el registro de la sala dentro de la transacción, con un `SEL
 
 Tomé la misma precaución al actualizar (bloqueo la reserva y la sala destino) y al cancelar (bloqueo la reserva). Es una solución que serializa las escrituras por sala, y eso reduce el paralelismo, pero para este dominio es asumible y mucho más simple de razonar que reintentos con bloqueo optimista. Preferí consistencia y claridad.
 
-### Cancelación lógica e idempotente
+### Cancelación lógica
 
 Cancelar no borra la fila: escribe `cancelled_at`. Así se conserva el historial y se puede auditar qué pasó. La operación es idempotente: si la reserva ya estaba cancelada, vuelve a responder 204 y no toca el instante original. Esto lo probé explícitamente porque es fácil escribir una versión que actualice la fecha en cada llamada.
 
@@ -153,7 +157,7 @@ Valido `page` y `size` a mano: página negativa y tamaño fuera de 1..100 devuel
 
 ### Seguridad
 
-Las lecturas son públicas y las escrituras requieren JWT, tal como pedía el enunciado. Hay un único usuario administrador configurable por variables de entorno, y el token se firma con HMAC y caduca en una hora.
+Las lecturas son públicas y las escrituras requieren JWT, tal como pedía. Hay un único usuario administrador configurable por variables de entorno, y el token se firma con HMAC y caduca en una hora.
 
 Es la parte más sencilla del proyecto y también la que más ampliaría: hoy cualquier usuario autenticado puede cancelar cualquier reserva, porque no hay propietario. Lo dejé así por alcance, no porque no viera el problema.
 
@@ -259,11 +263,9 @@ En las partes delicadas le pedí que explicara el razonamiento antes de darme c�
 
 Acepté bastante andamiaje: entidades JPA, DTOs de entrada y salida, mappers de MapStruct, la migración de Flyway, el manejador centralizado de errores con `ProblemDetail` y el esqueleto de muchos tests. También acepté la idea de usar intervalos semiabiertos, que luego verifiqué con casos de borde.
 
-Ese código lo leí antes de incorporarlo. No porque desconfiara por sistema, sino porque es mi nombre el que va en el repositorio.
+Ese código lo leí antes de incorporarlo ya que una IA no esta libre de errores. En algunos casos lo compilé y ejecuté antes de aceptarlo, y en otros lo revisé a mano y lo adapté a mi estilo. La IA no tiene contexto de proyecto ni de equipo, así que no puede decidir por uno.
 
 ### Qué corregí
-
-Esta es la parte que más me interesa contar, porque es donde se ve si la IA fue una herramienta o una excusa. Algunos ejemplos reales:
 
 - Swagger UI devolvía 401 en las operaciones protegidas aunque hubiera token. El esquema `bearerAuth` estaba declarado, pero ninguna operación lo referenciaba, así que la interfaz no enviaba la cabecera. Añadí `@SecurityRequirement` en cada operación protegida y un test que comprueba que `/v3/api-docs` lo incluye.
 - La primera versión usaba `Specification.where()`, que ya no encaja con la API actual de Spring Data. La sustituí por una alternativa compatible y volví a ejecutar las pruebas de filtros.
@@ -275,13 +277,11 @@ Esta es la parte que más me interesa contar, porque es donde se ve si la IA fue
 - Un test unitario se contradecía: verificaba que no se tocaba el repositorio al cancelar una reserva inexistente, cuando el propio servicio lo consulta primero. Lo borré; el caso ya estaba cubierto por el test de 404.
 - El mensaje de error para reservas en el pasado era ambiguo. Lo dejé en "La reserva debe comenzar posterior al momento actual", que dice exactamente qué falla.
 
-También corregí cosas de entorno: el JDK por defecto es 21, así que las ejecuciones fijan `JAVA_HOME` a 25; y los scripts manuales de PowerShell tipaban un parámetro como `[long]`, lo que impedía probar `PUT /api/bookings/abc` porque PowerShell fallaba antes de enviar la petición.
-
-### Cómo mantuve el control
+### Organización de commits y pruebas
 
 Trabajé por funcionalidades, con commits separados de implementación y de pruebas. Antes de cada commit ejecutaba la suite completa y hacía pruebas HTTP manuales. Si algo no me cuadraba, lo investigaba aunque los tests estuvieran en verde: los tests también pueden estar mal escritos, como demuestran varios de los ejemplos anteriores.
 
-La IA fue rápida para el andamiaje y para proponer escenarios que no había considerado. A cambio, metió la pata en detalles de API, en aserciones y en supuestos sobre el framework. La red que puse fue siempre la misma: leer el diff, compilar, ejecutar y probar a mano. Sin eso, no habría aceptado el código.
+La IA fue rápida para el andamiaje y para proponer escenarios que no había considerado. Pero se equivocó en detalles de API, en aserciones y en supuestos sobre el framework. El proceso que puse fue siempre: leer el diff, compilar, ejecutar y probar a mano. Sin eso, no habría aceptado el código.
 
 ## Limitaciones conocidas
 
