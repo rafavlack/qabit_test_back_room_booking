@@ -67,6 +67,19 @@ public class BookingPersistenceAdapter implements BookingRepository {
     }
 
     @Override
+    public Optional<Booking> findByIdForUpdate(Long id) {
+        return bookingJpaRepository.findByIdForUpdate(id)
+                .map(bookingPersistenceMapper::toDomain);
+    }
+
+    @Override
+    public boolean existsOverlappingExcluding(
+            Long roomId, Instant startTime, Instant endTime, Long id) {
+        return bookingJpaRepository.countOverlappingExcluding(
+                roomId, startTime, endTime, id) > 0;
+    }
+
+    @Override
     public BookingSearchResult search(BookingSearchCriteria criteria) {
         Pageable pageable = PageRequest.of(criteria.page(), criteria.size(), SEARCH_SORT);
         Page<BookingEntity> page = bookingJpaRepository.findAll(

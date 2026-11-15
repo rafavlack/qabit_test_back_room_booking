@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jetpackcodesolution.application.port.input.CreateBookingUseCase;
 import jetpackcodesolution.application.port.input.FindBookingByIdUseCase;
 import jetpackcodesolution.application.port.input.SearchBookingsUseCase;
+import jetpackcodesolution.application.port.input.UpdateBookingUseCase;
 import jetpackcodesolution.domain.model.Booking;
 import jetpackcodesolution.domain.model.BookingSearchResult;
 import jetpackcodesolution.web.mapper.BookingWebMapper;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,16 +37,19 @@ public class BookingController {
     private final CreateBookingUseCase createBookingUseCase;
     private final SearchBookingsUseCase searchBookingsUseCase;
     private final FindBookingByIdUseCase findBookingByIdUseCase;
+    private final UpdateBookingUseCase updateBookingUseCase;
     private final BookingWebMapper bookingWebMapper;
 
     public BookingController(
             CreateBookingUseCase createBookingUseCase,
             SearchBookingsUseCase searchBookingsUseCase,
             FindBookingByIdUseCase findBookingByIdUseCase,
+            UpdateBookingUseCase updateBookingUseCase,
             BookingWebMapper bookingWebMapper) {
         this.createBookingUseCase = createBookingUseCase;
         this.searchBookingsUseCase = searchBookingsUseCase;
         this.findBookingByIdUseCase = findBookingByIdUseCase;
+        this.updateBookingUseCase = updateBookingUseCase;
         this.bookingWebMapper = bookingWebMapper;
     }
 
@@ -98,5 +103,24 @@ public class BookingController {
             @Parameter(description = "Identificador de la reserva", required = true, example = "1")
             @PathVariable Long id) {
         return bookingWebMapper.toResponse(findBookingByIdUseCase.findById(id));
+    }
+
+    @Operation(summary = "Actualizar los datos editables de una reserva")
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Reserva actualizada"),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada no válidos o intervalo incorrecto"),
+        @ApiResponse(responseCode = "401", description = "Autenticación requerida"),
+        @ApiResponse(responseCode = "404", description = "Reserva o sala no encontrada"),
+        @ApiResponse(responseCode = "409", description = "La reserva está cancelada o se solapa con otra")})
+    @PutMapping("/{id}")
+    public BookingResponse update(
+            @Parameter(description = "Identificador de la reserva", required = true, example = "1")
+            @PathVariable Long id,
+            @Valid @RequestBody CreateBookingRequest request) {
+        Booking booking = updateBookingUseCase.updateBooking(
+                id, request.roomId(), request.responsible(),
+                request.startTime(), request.endTime());
+        return bookingWebMapper.toResponse(booking);
     }
 }

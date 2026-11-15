@@ -2,6 +2,7 @@ package jetpackcodesolution.web.controller;
 
 import jetpackcodesolution.domain.exception.BookingConflictException;
 import jetpackcodesolution.domain.exception.BookingNotFoundException;
+import jetpackcodesolution.domain.exception.CancelledBookingUpdateException;
 import jetpackcodesolution.domain.exception.InvalidBookingTimeException;
 import jetpackcodesolution.domain.exception.InvalidPageRequestException;
 import jetpackcodesolution.domain.exception.RoomHasBookingsException;
@@ -84,6 +85,14 @@ public class ApiExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.NOT_FOUND, exception.getMessage());
         problem.setTitle("Recurso no encontrado");
+        return problem;
+    }
+
+    @ExceptionHandler(CancelledBookingUpdateException.class)
+    public ProblemDetail handleCancelledBookingUpdate(CancelledBookingUpdateException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, exception.getMessage());
+        problem.setTitle("Conflicto de reserva");
         return problem;
     }
 

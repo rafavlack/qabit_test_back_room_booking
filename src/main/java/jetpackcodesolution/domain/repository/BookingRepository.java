@@ -17,5 +17,9 @@ public interface BookingRepository {
 
     Optional<Booking> findById(Long id);
 
+    Optional<Booking> findByIdForUpdate(Long id);
+
+    boolean existsOverlappingExcluding(Long roomId, Instant startTime, Instant endTime, Long id);
+
     BookingSearchResult search(BookingSearchCriteria criteria);
 }
