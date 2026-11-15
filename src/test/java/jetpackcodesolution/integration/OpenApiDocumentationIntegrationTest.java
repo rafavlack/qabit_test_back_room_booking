@@ -49,6 +49,8 @@ class OpenApiDocumentationIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.paths['/api/rooms'].get.security").doesNotExist())
                 .andExpect(jsonPath("$.paths['/api/rooms/{id}'].get.security").doesNotExist())
+                .andExpect(jsonPath("$.paths['/api/bookings'].get.security").doesNotExist())
+                .andExpect(jsonPath("$.paths['/api/bookings/{id}'].get.security").doesNotExist())
                 .andExpect(jsonPath("$.paths['/api/auth/login'].post.security").doesNotExist());
     }
 }
