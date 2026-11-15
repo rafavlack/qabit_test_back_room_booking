@@ -1,5 +1,6 @@
 package jetpackcodesolution.infrastructure.persistence;
 
+import jetpackcodesolution.domain.exception.RoomHasBookingsException;
 import jetpackcodesolution.domain.exception.RoomNameConflictException;
 import jetpackcodesolution.domain.model.Room;
 import jetpackcodesolution.domain.repository.RoomRepository;
@@ -30,6 +31,11 @@ public class RoomPersistenceAdapter implements RoomRepository {
     }
 
     @Override
+    public boolean existsByNameExcludingId(String name, Long id) {
+        return roomJpaRepository.existsByNameAndIdNot(name, id);
+    }
+
+    @Override
     public Room save(Room room) {
         try {
             return roomPersistenceMapper.toDomain(
@@ -49,5 +55,14 @@ public class RoomPersistenceAdapter implements RoomRepository {
     @Override
     public Optional<Room> findById(Long id) {
         return roomJpaRepository.findById(id).map(roomPersistenceMapper::toDomain);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        try {
+            roomJpaRepository.deleteById(id);
+        } catch (DataIntegrityViolationException exception) {
+            throw new RoomHasBookingsException();
+        }
     }
 }

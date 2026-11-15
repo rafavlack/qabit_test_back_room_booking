@@ -9,9 +9,13 @@ public interface RoomRepository {
 
     boolean existsByName(String name);
 
+    boolean existsByNameExcludingId(String name, Long id);
+
     Room save(Room room);
 
     List<Room> findAll();
 
     Optional<Room> findById(Long id);
+
+    void deleteById(Long id);
 }

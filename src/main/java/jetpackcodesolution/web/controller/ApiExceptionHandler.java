@@ -1,5 +1,6 @@
 package jetpackcodesolution.web.controller;
 
+import jetpackcodesolution.domain.exception.RoomHasBookingsException;
 import jetpackcodesolution.domain.exception.RoomNameConflictException;
 import jetpackcodesolution.domain.exception.RoomNotFoundException;
 import jetpackcodesolution.web.response.FieldViolation;
@@ -36,6 +37,14 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(RoomNameConflictException.class)
     public ProblemDetail handleRoomNameConflict(RoomNameConflictException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, exception.getMessage());
+        problem.setTitle("Conflicto de sala");
+        return problem;
+    }
+
+    @ExceptionHandler(RoomHasBookingsException.class)
+    public ProblemDetail handleRoomHasBookings(RoomHasBookingsException exception) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.CONFLICT, exception.getMessage());
         problem.setTitle("Conflicto de sala");
