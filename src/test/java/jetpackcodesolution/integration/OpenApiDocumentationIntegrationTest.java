@@ -40,7 +40,8 @@ class OpenApiDocumentationIntegrationTest {
     void bookingWriteOperationsRequireBearerAuth() throws Exception {
         mockMvc.perform(get("/v3/api-docs"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.paths['/api/bookings'].post.security[0].bearerAuth").isArray());
+                .andExpect(jsonPath("$.paths['/api/bookings'].post.security[0].bearerAuth").isArray())
+                .andExpect(jsonPath("$.paths['/api/bookings/{id}'].put.security[0].bearerAuth").isArray());
     }
 
     @Test
