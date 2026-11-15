@@ -197,7 +197,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"name\": \"string\",\n  \"capacity\": 6676\n}",
+                      "raw": "{\n  \"name\": \"Sala de pruebas\",\n  \"capacity\": 8\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -797,7 +797,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"string\",\n  \"capacity\": 6676\n}",
+                  "raw": "{\n  \"name\": \"Sala de pruebas\",\n  \"capacity\": 8\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -1216,7 +1216,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"endTime\": \"1985-01-25T18:10:14.917Z\",\n  \"responsible\": \"string\",\n  \"roomId\": 6863,\n  \"startTime\": \"2003-04-03T05:47:47.721Z\"\n}",
+                      "raw": "{\n  \"roomId\": 1,\n  \"responsible\": \"Ana Pérez\",\n  \"startTime\": \"2030-01-15T10:00:00Z\",\n  \"endTime\": \"2030-01-15T11:00:00Z\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -1744,7 +1744,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/bookings?roomId=3426&date=2026-12-01&includeCancelled=false&page=0&size=20",
+                  "raw": "{{baseUrl}}/api/bookings?roomId=1&date=2030-01-15&includeCancelled=false&page=0&size=20",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -1756,12 +1756,12 @@
                     {
                       "description": "Identificador de la sala",
                       "key": "roomId",
-                      "value": "3426"
+                      "value": "1"
                     },
                     {
                       "description": "Día a consultar en formato YYYY-MM-DD",
                       "key": "date",
-                      "value": "2026-12-01"
+                      "value": "2030-01-15"
                     },
                     {
                       "description": "Incluir reservas canceladas",
@@ -1930,7 +1930,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"endTime\": \"1985-01-25T18:10:14.917Z\",\n  \"responsible\": \"string\",\n  \"roomId\": 6863,\n  \"startTime\": \"2003-04-03T05:47:47.721Z\"\n}",
+                  "raw": "{\n  \"roomId\": 1,\n  \"responsible\": \"Ana Pérez\",\n  \"startTime\": \"2030-01-15T10:00:00Z\",\n  \"endTime\": \"2030-01-15T11:00:00Z\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -2236,7 +2236,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"password\": \"string\",\n  \"username\": \"string\"\n}",
+                      "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}",
                       "options": {
                         "raw": {
                           "headerFamily": "json",
@@ -2305,6 +2305,18 @@
                       "cookie": [],
                       "body": "{\n  \"accessToken\": \"string\",\n  \"tokenType\": \"string\",\n  \"expiresInSeconds\": 9373\n}"
                     }
+                  ],
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "const json = pm.response.json();",
+                          "pm.collectionVariables.set('bearerToken', json.accessToken);"
+                        ]
+                      }
+                    }
                   ]
                 }
               ]
@@ -2318,6 +2330,11 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:8081"
+    },
+    {
+      "key": "bearerToken",
+      "value": "",
+      "type": "string"
     }
   ]
 }

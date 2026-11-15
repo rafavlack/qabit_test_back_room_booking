@@ -92,7 +92,7 @@ java -jar target/qabit_test_back_room_booking-1.0.0.jar
 
 ### Colección de Postman
 
-Incluye una colección de Postman (`postman collection/Qabit Room Booking API.postman_collection.json`) con todos los endpoints preparados y listos para importar. Contiene la variable `baseUrl` configurada en `http://localhost:8081` y usa variables `bearerToken` para los endpoints protegidos. La colección está organizada en tres carpetas (auth, rooms, bookings) y cubre login, CRUD de salas, reservas con filtros, paginación, solapamientos y cancelación lógica. Para usarla, importa el archivo en Postman, ejecuta el login y guarda el token en la variable `bearerToken`.
+Incluye una colección de Postman (`postman collection/Qabit Room Booking API.postman_collection.json`) con todos los endpoints preparados y listos para importar. Contiene la variable `baseUrl` configurada en `http://localhost:8081` y usa variables `bearerToken` para los endpoints protegidos. La colección está organizada en tres carpetas (auth, rooms, bookings) y cubre login, CRUD de salas, reservas con filtros, paginación, solapamientos y cancelación lógica. Para usarla, importa el archivo en Postman y ejecuta primero el login: su script de test guarda automáticamente el token en la variable `bearerToken`, que los endpoints protegidos usan mediante la opción Bearer. Los valores por defecto están listos para el arranque local (perfil `dev`): `baseUrl` apunta a `http://localhost:8081`, las credenciales son `admin`/`admin123` y las fechas de ejemplo son futuras.
 
 ## Cómo está organizado el código
 
