@@ -1,7 +1,9 @@
 package jetpackcodesolution.web.controller;
 
 import jetpackcodesolution.domain.exception.BookingConflictException;
+import jetpackcodesolution.domain.exception.BookingNotFoundException;
 import jetpackcodesolution.domain.exception.InvalidBookingTimeException;
+import jetpackcodesolution.domain.exception.InvalidPageRequestException;
 import jetpackcodesolution.domain.exception.RoomHasBookingsException;
 import jetpackcodesolution.domain.exception.RoomNameConflictException;
 import jetpackcodesolution.domain.exception.RoomNotFoundException;
@@ -74,6 +76,22 @@ public class ApiExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.CONFLICT, exception.getMessage());
         problem.setTitle("Conflicto de reserva");
+        return problem;
+    }
+
+    @ExceptionHandler(BookingNotFoundException.class)
+    public ProblemDetail handleBookingNotFound(BookingNotFoundException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND, exception.getMessage());
+        problem.setTitle("Recurso no encontrado");
+        return problem;
+    }
+
+    @ExceptionHandler(InvalidPageRequestException.class)
+    public ProblemDetail handleInvalidPageRequest(InvalidPageRequestException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST, exception.getMessage());
+        problem.setTitle("Parámetros de paginación no válidos");
         return problem;
     }
 
