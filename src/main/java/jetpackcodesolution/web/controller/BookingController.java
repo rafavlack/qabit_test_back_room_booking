@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jetpackcodesolution.application.port.input.CreateBookingUseCase;
+import jetpackcodesolution.application.port.input.CancelBookingUseCase;
 import jetpackcodesolution.application.port.input.FindBookingByIdUseCase;
 import jetpackcodesolution.application.port.input.SearchBookingsUseCase;
 import jetpackcodesolution.application.port.input.UpdateBookingUseCase;
@@ -18,6 +19,7 @@ import jetpackcodesolution.web.response.BookingResponse;
 import jetpackcodesolution.web.response.PageResponse;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,6 +40,7 @@ public class BookingController {
     private final SearchBookingsUseCase searchBookingsUseCase;
     private final FindBookingByIdUseCase findBookingByIdUseCase;
     private final UpdateBookingUseCase updateBookingUseCase;
+    private final CancelBookingUseCase cancelBookingUseCase;
     private final BookingWebMapper bookingWebMapper;
 
     public BookingController(
@@ -45,11 +48,13 @@ public class BookingController {
             SearchBookingsUseCase searchBookingsUseCase,
             FindBookingByIdUseCase findBookingByIdUseCase,
             UpdateBookingUseCase updateBookingUseCase,
+            CancelBookingUseCase cancelBookingUseCase,
             BookingWebMapper bookingWebMapper) {
         this.createBookingUseCase = createBookingUseCase;
         this.searchBookingsUseCase = searchBookingsUseCase;
         this.findBookingByIdUseCase = findBookingByIdUseCase;
         this.updateBookingUseCase = updateBookingUseCase;
+        this.cancelBookingUseCase = cancelBookingUseCase;
         this.bookingWebMapper = bookingWebMapper;
     }
 
@@ -122,5 +127,20 @@ public class BookingController {
                 id, request.roomId(), request.responsible(),
                 request.startTime(), request.endTime());
         return bookingWebMapper.toResponse(booking);
+    }
+
+    @Operation(summary = "Cancelar una reserva")
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Reserva cancelada o ya estaba cancelada"),
+        @ApiResponse(responseCode = "400", description = "El identificador no es válido"),
+        @ApiResponse(responseCode = "401", description = "Autenticación requerida"),
+        @ApiResponse(responseCode = "404", description = "Reserva no encontrada")})
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancel(
+            @Parameter(description = "Identificador de la reserva", required = true, example = "1")
+            @PathVariable Long id) {
+        cancelBookingUseCase.cancelBooking(id);
+        return ResponseEntity.noContent().build();
     }
 }
